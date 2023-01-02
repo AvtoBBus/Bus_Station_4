@@ -121,7 +121,7 @@ def expanded_change(message):
             if locked == False:
                 received_message = bot.send_message(
                     message.chat.id, "Ура! У тебя есть доступ!\nНапиши, что угодно. чтобы продолжить!")
-                bot.register_next_step_handler(received_message, send_secret)
+                bot.register_next_step_handler(received_message, change_secret)
             else:
                 markup = types.ReplyKeyboardMarkup(
                     resize_keyboard=True, one_time_keyboard=True)
@@ -339,18 +339,35 @@ def change_book(message):
         error(message)
 
 
-def send_secret(message):
-    bot.send_message(message.chat.id, "Отправляю!")
-    for doc in os.listdir("secret/"):
-        file = open(f"secret/{doc}", "rb")
-        bot.send_document(message.chat.id, file)
+def change_secret(message):
+    list_items = []
+    for doc in os.listdir("secret"):
+        list_items.append(doc)
     markup = types.ReplyKeyboardMarkup(
         resize_keyboard=True, one_time_keyboard=True)
-    item1 = types.KeyboardButton("/change")
-    markup.add(item1)
+    for item in list_items:
+        markup.add(item)
+    item = types.KeyboardButton("Вернуться в меню")
+    markup.add(item)
     received_message = bot.send_message(
-        message.chat.id, "Нажми \"/change\" чтобы продолжить", reply_markup=markup)
-    bot.register_next_step_handler(received_message, change_option)
+        message.chat.id, "Какой секретик нужен?", reply_markup=markup)
+    bot.register_next_step_handler(received_message, send_secret)
+
+
+def send_secret(message):
+    if not message.text == 'Вернуться в меню':
+        bot.send_message(message.chat.id, "Отправляю!")
+        file = open(f"secret/{message.text}", "rb")
+        bot.send_document(message.chat.id, file)
+        markup = types.ReplyKeyboardMarkup(
+            resize_keyboard=True, one_time_keyboard=True)
+        item1 = types.KeyboardButton("/change")
+        markup.add(item1)
+        received_message = bot.send_message(
+            message.chat.id, "Нажми \"/change\" чтобы продолжить", reply_markup=markup)
+        bot.register_next_step_handler(received_message, change_option)
+    else:
+        change_option(message)
 
 
 def send_pdf(message):
