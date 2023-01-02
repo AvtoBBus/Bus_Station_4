@@ -3,6 +3,7 @@ import config
 import os.path
 import time
 import csv
+import get_schedule as gs
 
 from telebot import types
 
@@ -56,8 +57,8 @@ def change_option(message):
     item1 = types.KeyboardButton("Узнать задание по лабе")
     item2 = types.KeyboardButton("Достать учебник")
     item3 = types.KeyboardButton("Получить секретик")
-
-    markup.add(item1, item2, item3)
+    item4 = types.KeyboardButton("Узнать расписание")
+    markup.add(item1, item2, item3, item4)
 
     received_message_text = bot.send_message(
         message.chat.id, "Погнали!", reply_markup=markup)
@@ -70,7 +71,6 @@ def expanded_change(message):
         if message.text == 'Узнать задание по лабе':
             sti1 = open('data/stickers/REALLY.webp', 'rb')
             bot.send_sticker(message.chat.id, sti1)
-            markup = types.ReplyKeyboardRemove()
             markup = types.ReplyKeyboardRemove()
             list_items = []
             list_files = os.listdir("data/labs_book/labs/")
@@ -131,6 +131,14 @@ def expanded_change(message):
                     message.chat.id, "Блинб, у тебя нет доступа(\nНажми \"/change\" чтобы продолжить", reply_markup=markup)
                 bot.register_next_step_handler(received_message, change_option)
 
+        elif message.text == 'Узнать расписание':
+            sti1 = open('data/stickers/REALLY.webp', 'rb')
+            bot.send_sticker(message.chat.id, sti1)
+            markup = types.ReplyKeyboardRemove()
+            received_message = bot.send_message(
+                message.chat.id, "Введи мне номер своей группы, номер недели который тебе нужен и номер дня недели\n\n!!! Format: 6101-010302D 17 5 !!!", reply_markup=markup)
+            bot.register_next_step_handler(received_message, send_shedule)
+
         elif message.text == 'Вернуться в меню':
             change_option(message)
 
@@ -153,6 +161,23 @@ def error(message):
 
 def open_file(way_to_file):
     return os.path.exists(way_to_file)
+
+
+def send_shedule(message):
+    if not os.path.isdir('AllGroupShedule'):
+        gs.pars_all_group()
+    try:
+        num_group = message.text.split()[0]
+        selectedWeek = message.text.split()[1]
+        selectedWeekday = message.text.split()[2]
+        url_schedule = gs.find_schedule_url(
+            num_group, selectedWeek, selectedWeekday)
+        shedule = gs.pars_shedule(url_schedule)
+        bot.send_message(
+            message.chat.id, shedule + f"\nURL: {url_schedule}")
+        change_option(message)
+    except:
+        error(message)
 
 
 def change_lab_task(message):
