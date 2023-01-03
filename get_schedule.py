@@ -37,6 +37,7 @@ def find_schedule_url(num_group: str, selectedWeek: str, selectedWeekday: str) -
 
 def pars_shedule(url: str) -> str:
     result = ""
+    current_date = ""
     list_lessons = []
     list_lessons_time = [
         "8:00 - 9:35",
@@ -49,6 +50,8 @@ def pars_shedule(url: str) -> str:
     list_lessons_type = []
     response = requests.get(url)
     soup = BS(response.content, "html.parser")
+    current_date = soup.find(class_="week-nav-current_date")
+    result += f"Расписание на {current_date.contents[0]}\n\n"
     for item in soup.find_all(class_="schedule__item schedule__item_show"):
         i = 1
         last_num_of_lessons = len(list_lessons)

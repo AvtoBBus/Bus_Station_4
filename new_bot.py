@@ -58,7 +58,9 @@ def change_option(message):
     item2 = types.KeyboardButton("Достать учебник")
     item3 = types.KeyboardButton("Получить секретик")
     item4 = types.KeyboardButton("Узнать расписание")
-    markup.add(item1, item2, item3, item4)
+    item5 = types.KeyboardButton("Важные ссылки")
+
+    markup.add(item1, item2, item3, item4, item5)
 
     received_message_text = bot.send_message(
         message.chat.id, "Погнали!", reply_markup=markup)
@@ -139,6 +141,9 @@ def expanded_change(message):
                 message.chat.id, "Введи мне номер своей группы, номер недели который тебе нужен и номер дня недели\n\n!!! Format: 6101-010302D 17 5 !!!", reply_markup=markup)
             bot.register_next_step_handler(received_message, send_shedule)
 
+        elif message.text == 'Важные ссылки':
+            important_links(message)
+
         elif message.text == 'Вернуться в меню':
             change_option(message)
 
@@ -161,6 +166,12 @@ def error(message):
 
 def open_file(way_to_file):
     return os.path.exists(way_to_file)
+
+
+def important_links(message):
+    markup = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, "ИИК Приём - https://vk.com/iik.ssau.priem\nСтуд. совет ИИК - https://vk.com/sciic\nРасписание ИИК - https://ssau.ru/rasp/faculty/492430598?course=1\nSSAU - https://ssau.ru\n", reply_markup=markup)
+    change_option(message)
 
 
 def send_shedule(message):
