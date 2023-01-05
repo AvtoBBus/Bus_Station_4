@@ -45,6 +45,8 @@ def change_option(message):
             if row[1] == str(message.from_user.id):
                 write_in_file = False
     if write_in_file:
+        print(
+            f"Новый пользователь -> {message.from_user.first_name} -> ID: {message.from_user.id}")
         with open("users.csv", "a", newline="", encoding="utf-8") as file:
             printer = csv.writer(file, delimiter=";")
             printer.writerow([
