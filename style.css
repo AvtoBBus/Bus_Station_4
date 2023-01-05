@@ -1,0 +1,14 @@
+.hiImage {
+    display: table-cell;
+    width: 200px;
+    height: 200px;
+    /* border: 5px solid orange;*/
+    background-color: aqua;
+}
+
+.change_lesson {
+    text-align: center;
+    position: absolute;
+    border: 5px solid black;
+    background-color: aqua;
+}
