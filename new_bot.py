@@ -137,6 +137,10 @@ def expanded_change(message):
             sti1 = open('data/stickers/REALLY.webp', 'rb')
             bot.send_sticker(message.chat.id, sti1)
             markup = types.ReplyKeyboardRemove()
+            markup = types.ReplyKeyboardMarkup(
+                resize_keyboard=True, one_time_keyboard=True)
+            item = types.KeyboardButton("Вернуться в меню")
+            markup.add(item)
             received_message = bot.send_message(
                 message.chat.id, "Введи мне номер своей группы, номер недели который тебе нужен и номер дня недели\n\n!!! Format: 6101-010302D 17 5 !!!", reply_markup=markup)
             bot.register_next_step_handler(received_message, send_shedule)
@@ -171,24 +175,31 @@ def open_file(way_to_file):
 def important_links(message):
     markup = types.ReplyKeyboardRemove()
     bot.send_message(message.chat.id, "ИИК Приём - https://vk.com/iik.ssau.priem\nСтуд. совет ИИК - https://vk.com/sciic\nРасписание ИИК - https://ssau.ru/rasp/faculty/492430598?course=1\nSSAU - https://ssau.ru\n", reply_markup=markup)
+    print(
+        f"Отправлено {message.text} -> Пользователь {message.from_user.first_name} -> ID: {message.from_user.id}")
     change_option(message)
 
 
 def send_shedule(message):
-    if not os.path.isdir('AllGroupShedule'):
-        gs.pars_all_group()
-    try:
-        num_group = message.text.split()[0]
-        selectedWeek = message.text.split()[1]
-        selectedWeekday = message.text.split()[2]
-        url_schedule = gs.find_schedule_url(
-            num_group, selectedWeek, selectedWeekday)
-        shedule = gs.pars_shedule(url_schedule)
-        bot.send_message(
-            message.chat.id, shedule + f"\nURL: {url_schedule}")
+    if message.text == 'Вернуться в меню':
         change_option(message)
-    except:
-        error(message)
+    else:
+        if not os.path.isdir('AllGroupShedule'):
+            gs.pars_all_group()
+        try:
+            num_group = message.text.split()[0]
+            selectedWeek = message.text.split()[1]
+            selectedWeekday = message.text.split()[2]
+            url_schedule = gs.find_schedule_url(
+                num_group, selectedWeek, selectedWeekday)
+            shedule = gs.pars_shedule(url_schedule)
+            bot.send_message(
+                message.chat.id, shedule + f"\nURL: {url_schedule}")
+            print(
+                f"Отправлено расписание {message.text} -> Пользователь {message.from_user.first_name} -> ID: {message.from_user.id}")
+            change_option(message)
+        except:
+            error(message)
 
 
 def change_lab_task(message):
@@ -395,6 +406,8 @@ def send_secret(message):
         bot.send_message(message.chat.id, "Отправляю!")
         file = open(f"secret/{message.text}", "rb")
         bot.send_document(message.chat.id, file)
+        print(
+            f"Отправлен {message.text} -> Пользователь {message.from_user.first_name} -> ID: {message.from_user.id}")
         markup = types.ReplyKeyboardMarkup(
             resize_keyboard=True, one_time_keyboard=True)
         item1 = types.KeyboardButton("/change")
@@ -428,6 +441,8 @@ def send_pdf(message):
         needed_book = open(way_to_file, 'rb')
         bot.send_message(message.chat.id, "Отправляю")
         bot.send_document(message.chat.id, needed_book)
+        print(
+            f"Отправлен {message.text} -> Пользователь {message.from_user.first_name} -> ID: {message.from_user.id}")
         sti = open('data/stickers/NYA.webp', 'rb')
         bot.send_sticker(message.chat.id, sti)
         markup = types.ReplyKeyboardMarkup(
@@ -442,6 +457,8 @@ def send_pdf(message):
 # RUN
 while True:
     try:
+        print("Eddie Start!")
         bot.polling(none_stop=True)
     except:
+        print("Some problem, restart")
         time.sleep(15)
