@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="data\fonts\intro.css">
+    <title>EddieHelper_bot</title>
 </head>
 
 <body>
     <header>
-        <div>
+        <div class="welcome">
             <img class="hiImage" src="data\stickers\HI.webp">
+            <span class="hiPhrase" style="font-family: Intro;">
+                Приветик!<br><br>Я бот Эдди,<br>призванный помогать в учёбе
+            </span>
         </div>
-        <h2>
-            Приветик! Я бот Эдди<br>призванный помогать в учёбе
-        </h2>
-        <h3>
-            И вот что я умею:
-        </h3>
-        <ul>
-            <li>
-                <a href="Eddie_Book.html">Достать учебник</a>
-            </li>
-            <li>
-                <a href="Eddie_Labs.html">Узнать задание по лабе</a>
-            </li>
-            <li>
-                <a href="Eddie_Shedule.html">Узнать расписание</a>
-            </li>
-        </ul>
     </header>
+    <h3>
+        И вот что я умею:
+    </h3>
+    <ul class="listWhatICan">
+        <li class="cellWhatICan"><a class="cellWhatICan URL" href="Eddie_Book.html">Достать учебник</a></li>
+        <li class="cellWhatICan"><a class="cellWhatICan URL" href="Eddie_Labs.html">Узнать задание по лабе</a></li>
+        <li class="cellWhatICan"><a class="cellWhatICan URL" href="Eddie_Shedule.html">Узнать расписание</a></li>
+    </ul>
     <footer>
-        <p>Я в Telegram: @EddieHelper_bot</p>
+        <p class="aboutMe">Я в Telegram: @EddieHelper_bot</p>
     </footer>
     <script src="script.js"></script>
 </body>
