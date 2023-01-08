@@ -264,128 +264,26 @@ def change_book(message):
     list_items = []
     list_files = []
     markup = types.ReplyKeyboardRemove()
-    if message.text == 'Алгебра_и_Геометрия':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/Алгебра_и_Геометрия")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-        received_message = bot.send_message(
-            message.chat.id, "Автор?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'Мат_Анализ':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/Мат_Анализ")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Автор?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'Теор_Вероят_и_СП':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/Теор_Вероят_и_СП")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Что именно?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'Английский':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/Английский")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Что именно?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'Мат_Логика_Теор_Алгоритмов':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/Мат_Логика_Теор_Алгоритмов")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Автор?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'Физика':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/Физика")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Автор?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'История':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/История")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Автор?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'Вернуться в меню':
+    if message.text == 'Вернуться в меню':
         change_option(message)
     else:
-        error(message)
+        markup = types.ReplyKeyboardMarkup(
+            resize_keyboard=True, one_time_keyboard=True)
+        try:
+            list_files = os.listdir(f"data/labs_book/{message.text}")
+            for files in list_files:
+                list_items.append(files)
+            markup = types.ReplyKeyboardMarkup(
+                resize_keyboard=True, one_time_keyboard=True)
+            for item in list_items:
+                markup.add(item)
+            item = types.KeyboardButton("Вернуться в меню")
+            markup.add(item)
+            received_message = bot.send_message(
+                message.chat.id, "Автор?", reply_markup=markup)
+            bot.register_next_step_handler(received_message, send_pdf)
+        except:
+            error(message)
 
 
 def change_secret(message):
