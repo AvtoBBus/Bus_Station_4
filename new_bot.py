@@ -207,57 +207,25 @@ def send_shedule(message):
 def change_lab_task(message):
     list_items = []
     list_files = []
-    if message.text == 'ООП':
-        list_files = os.listdir("data/labs_book/labs/ООП")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-        received_message = bot.send_message(
-            message.chat.id, "Номер?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'ОНИ':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/labs/ОНИ")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Номер?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'ОП':
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-
-        list_files = os.listdir("data/labs_book/labs/ОП")
-        for files in list_files:
-            list_items.append(files)
-        markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True)
-        for item in list_items:
-            markup.add(item)
-        item = types.KeyboardButton("Вернуться в меню")
-        markup.add(item)
-
-        received_message = bot.send_message(
-            message.chat.id, "Номер?", reply_markup=markup)
-        bot.register_next_step_handler(received_message, send_pdf)
-    elif message.text == 'Вернуться в меню':
+    if message.text == 'Вернуться в меню':
         change_option(message)
     else:
-        error(message)
+        try:
+            list_files = os.listdir(f"data/labs_book/labs/{message.text}")
+            for files in list_files:
+                list_items.append(files)
+            markup = types.ReplyKeyboardRemove()
+            markup = types.ReplyKeyboardMarkup(
+                resize_keyboard=True, one_time_keyboard=True)
+            for item in list_items:
+                markup.add(item)
+            item = types.KeyboardButton("Вернуться в меню")
+            markup.add(item)
+            received_message = bot.send_message(
+                message.chat.id, "Номер?", reply_markup=markup)
+            bot.register_next_step_handler(received_message, send_pdf)
+        except:
+            error(message)
 
 
 def change_book(message):
