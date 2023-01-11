@@ -4,6 +4,7 @@ import os.path
 import time
 import csv
 import get_schedule as gs
+import get_schedule_session as gs_session
 
 from telebot import types
 
@@ -51,7 +52,8 @@ def change_option(message):
             printer = csv.writer(file, delimiter=";")
             printer.writerow([
                 message.from_user.first_name,
-                message.from_user.id
+                message.from_user.id,
+                message.chat.id
             ])
 
     markup = types.ReplyKeyboardMarkup(
@@ -61,8 +63,11 @@ def change_option(message):
     item3 = types.KeyboardButton("Получить секретик")
     item4 = types.KeyboardButton("Узнать расписание")
     item5 = types.KeyboardButton("Важные ссылки")
-
-    markup.add(item1, item2, item3, item4, item5)
+    if str(message.from_user.id) == '765103434':
+        item6 = types.KeyboardButton("News")
+        markup.add(item1, item2, item3, item4, item5, item6)
+    else:
+        markup.add(item1, item2, item3, item4, item5)
 
     received_message_text = bot.send_message(
         message.chat.id, "Погнали!", reply_markup=markup)
@@ -150,6 +155,11 @@ def expanded_change(message):
         elif message.text == 'Важные ссылки':
             important_links(message)
 
+        elif message.text == 'News':
+            if str(message.from_user.id) == '765103434':
+                send_news(message)
+            else:
+                error(message)
         elif message.text == 'Вернуться в меню':
             change_option(message)
 
@@ -194,14 +204,61 @@ def send_shedule(message):
             selectedWeekday = message.text.split()[2]
             url_schedule = gs.find_schedule_url(
                 num_group, selectedWeek, selectedWeekday)
-            shedule = gs.pars_shedule(url_schedule)
+            schedule = gs.pars_shedule(url_schedule)
             bot.send_message(
-                message.chat.id, shedule + f"\nURL: {url_schedule}")
+                message.chat.id, schedule + f"\nURL: {url_schedule}")
+            with open(f"data/work_with_group_id/{message.chat.id}.txt", "w", encoding="utf-8") as file:
+                file.write(num_group)
             print(
                 f"Отправлено расписание {message.text} -> Пользователь {message.from_user.first_name} -> ID: {message.from_user.id}")
-            change_option(message)
+            markup = types.ReplyKeyboardRemove()
+            markup = types.ReplyKeyboardMarkup(
+                resize_keyboard=True, one_time_keyboard=True)
+            item1 = types.KeyboardButton("Узнать расписание сессии")
+            item2 = types.KeyboardButton("Вернуться в меню")
+            markup.add(item1, item2)
+            received_message = bot.send_message(
+                message.chat.id, "Хочешь узнать что-то ещё?", reply_markup=markup)
+            bot.register_next_step_handler(
+                received_message, send_session_shedule)
         except:
             error(message)
+
+
+def send_session_shedule(message):
+    if message.text == "Вернуться в меню":
+        os.remove(f"data/work_with_group_id/{message.chat.id}.txt")
+        change_option(message)
+    else:
+        try:
+            num_group = ""
+            with open(f"data/work_with_group_id/{message.chat.id}.txt", "r", encoding="utf-8") as file:
+                num_group = file.read()
+            schedule = gs_session.pars_schedule_session(num_group)
+            url_schedule = gs_session.find_schedule_session_url(num_group)
+            markup = types.ReplyKeyboardRemove()
+            bot.send_message(
+                message.chat.id, schedule + f"\nURL: {url_schedule}", reply_markup=markup)
+            os.remove(f"data/work_with_group_id/{message.chat.id}.txt")
+            print(
+                f"Отправлено расписание сессии {message.text} -> Пользователь {message.from_user.first_name} -> ID: {message.from_user.id}")
+            change_option(message)
+        except:
+            bot.send_message(
+                message.chat.id, "Возникла ошибка, возможно расписания сессии ещё нет(")
+
+
+def send_news(message):
+    with open('data/info.txt', 'r', encoding="utf-8") as file:
+        news = file.read()
+    with open('users.csv', 'r', encoding="utf-8") as file:
+        readerder = csv.reader(file, delimiter=";")
+        for row in readerder:
+            try:
+                bot.send_message(row[2], news)
+            except:
+                pass
+    change_option(message)
 
 
 def change_lab_task(message):
